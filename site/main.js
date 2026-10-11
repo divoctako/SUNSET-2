@@ -44,6 +44,27 @@
     }
   });
 
+  /* ---------- Floating contact button ---------- */
+  const fab = document.getElementById('fab');
+  const fabToggle = fab.querySelector('.fab-toggle');
+  const setFab = open => {
+    fab.classList.toggle('open', open);
+    fabToggle.setAttribute('aria-expanded', String(open));
+  };
+  fabToggle.addEventListener('click', () => {
+    const open = !fab.classList.contains('open');
+    setFab(open);
+    if (open) fab.querySelector('.fab-item').focus({ preventScroll: true });
+  });
+  fab.addEventListener('click', e => { if (e.target.closest('.fab-item')) setFab(false); });
+  document.addEventListener('click', e => { if (!fab.contains(e.target)) setFab(false); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && fab.classList.contains('open')) {
+      setFab(false);
+      fabToggle.focus();
+    }
+  });
+
   /* ---------- Active section in menu ---------- */
   const navLinks = [...nav.querySelectorAll('a')];
   const sections = navLinks.map(a => document.querySelector(a.getAttribute('href')));
