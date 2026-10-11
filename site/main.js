@@ -288,7 +288,7 @@
   }
 
   /* Tap an empty spot: pop a falling scoop into sprinkles, or toss a new one */
-  const BUSY = 'a, button, input, label, dialog, .site-header, .mobile-bar, .col-text, .hero-copy, .hero-media, ' +
+  const BUSY = 'a, button, input, label, dialog, .site-header, .fab, .col-text, .hero-copy, .hero-media, ' +
     '.pkg-card, .gallery, .contact-links, .frame, .photo-strip, .site-footer';
   document.addEventListener('click', e => {
     if (reduceMotion.matches || e.button !== 0 || e.target.closest(BUSY)) return;
