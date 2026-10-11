@@ -15,6 +15,7 @@ Run after editing the JSON or the template:  python tools/build_site.py
 """
 import html
 import json
+import random
 import re
 from pathlib import Path
 
@@ -73,6 +74,45 @@ def zoom(name):
     return f'data-full="assets/{m["original"]}" data-w="{m["width"]}" data-h="{m["height"]}"'
 
 
+def drip(spec):
+    """Melting-ice-cream edge: an icing band with drips of varying length."""
+    color, seed = spec.split(";")
+    rng = random.Random(int(seed))
+    parts = [f'<svg class="drip-edge" viewBox="0 0 1440 140" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false">',
+             f'<g fill="{color}">',
+             '<rect x="0" y="0" width="1440" height="26"/>']
+    # scalloped lower edge of the band
+    for x in range(0, 1441, 48):
+        parts.append(f'<circle cx="{x}" cy="24" r="{rng.randint(14, 20)}"/>')
+    x = rng.randint(10, 40)
+    while x < 1420:
+        w = rng.randint(16, 30)
+        length = rng.randint(30, 96)
+        r = w / 2
+        delay = rng.uniform(0, 4)
+        dur = rng.uniform(4, 7)
+        parts.append(
+            f'<path class="drip-line" style="animation-delay:-{delay:.1f}s;animation-duration:{dur:.1f}s" '
+            f'd="M{x} 20 V{20 + length} a{r:.1f} {r:.1f} 0 0 0 {w} 0 V20 Z"/>')
+        x += w + rng.randint(30, 110)
+    parts.append('</g></svg>')
+    return "".join(parts)
+
+
+def strip(_):
+    """Endless photo strip: every image twice, decorative (alt empty)."""
+    items = []
+    for name in list(images) * 2:
+        m = images[name]
+        stem = Path(name).stem
+        w = m["widths"][0]
+        h = round(m["height"] * w / m["width"])
+        items.append(
+            f'<li><picture><source type="image/avif" srcset="assets/img/{stem}-{w}.avif">'
+            f'<img src="assets/img/{stem}-{w}.webp" alt="" width="{w}" height="{h}" loading="lazy" decoding="async"></picture></li>')
+    return "".join(items)
+
+
 def render(tpl):
     def sub(match):
         kind, arg = match.group(1), match.group(2)
@@ -86,9 +126,13 @@ def render(tpl):
             return pic(arg)
         if kind == "zoom":
             return zoom(arg)
+        if kind == "drip":
+            return drip(arg)
+        if kind == "strip":
+            return strip(arg)
         raise ValueError(kind)
 
-    return re.sub(r"\{\{(p|a|head|pic|zoom):([^}]+)\}\}", sub, tpl)
+    return re.sub(r"\{\{(p|a|head|pic|zoom|drip|strip):([^}]+)\}\}", sub, tpl)
 
 
 def main():

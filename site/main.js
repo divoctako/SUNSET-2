@@ -138,12 +138,14 @@
   }
 
   const SPRINKLE_COLORS = ['#F6861A', '#FFFFFF', '#FFB566', '#A94700', '#F59BB0', '#B5D38A'];
-  function burst(host, x, y) {
+  function burst(host, x, y, allRound) {
     const n = 26;
     for (let i = 0; i < n; i++) {
       const s = document.createElement('span');
       s.className = 'sprinkle';
-      const angle = Math.PI + (Math.PI * i) / (n - 1) + (Math.random() - 0.5) * 0.3;
+      const angle = allRound
+        ? (Math.PI * 2 * i) / n + Math.random() * 0.3
+        : Math.PI + (Math.PI * i) / (n - 1) + (Math.random() - 0.5) * 0.3;
       const dist = 60 + Math.random() * 80;
       s.style.left = x + 'px';
       s.style.top = y + 'px';
@@ -165,9 +167,9 @@
   let running = false;
   let lastT = 0;
 
-  function spawn(xHint) {
+  function spawn(xHint, yHint) {
     const mobile = mobileMQ.matches;
-    if (falling.length >= (mobile ? 7 : 16)) return;
+    if (falling.length >= (mobile ? 9 : 18)) return;
     const size = mobile ? 34 + Math.random() * 24 : 48 + Math.random() * 46;
     const w = window.innerWidth;
     let x;
@@ -177,12 +179,13 @@
     const el = makeScoop();
     el.style.width = size.toFixed(0) + 'px';
     layer.appendChild(el);
+    const tapped = yHint != null;
     falling.push({
-      el,
+      el, size,
       x: x - size / 2,
-      y: -size - Math.random() * 40,
-      vx: (Math.random() - 0.5) * 40,
-      vy: 80 + Math.random() * 120,
+      y: tapped ? yHint - size / 2 : -size - Math.random() * 40,
+      vx: (Math.random() - 0.5) * (tapped ? 160 : 40),
+      vy: tapped ? -380 - Math.random() * 120 : 80 + Math.random() * 120,
       rot: Math.random() * 360,
       vr: (Math.random() - 0.5) * 160,
     });
@@ -286,6 +289,77 @@
     }
   }
 
+  /* Tap an empty spot: pop a falling scoop into sprinkles, or toss a new one */
+  const BUSY = 'a, button, input, label, dialog, .site-header, .mobile-bar, .col-text, .hero-copy, .hero-media, ' +
+    '.pkg-card, .gallery, .contact-links, .frame, .photo-strip, .site-footer';
+  document.addEventListener('click', e => {
+    if (reduceMotion.matches || e.button !== 0 || e.target.closest(BUSY)) return;
+    if (window.getSelection && String(window.getSelection())) return;
+    const x = e.clientX, y = e.clientY;
+    for (let i = falling.length - 1; i >= 0; i--) {
+      const s = falling[i];
+      const cx = s.x + s.size / 2, cy = s.y + s.size * 0.46, r = s.size * 0.55;
+      if ((x - cx) ** 2 + (y - cy) ** 2 <= r * r) {
+        s.el.remove();
+        falling.splice(i, 1);
+        burst(layer, cx, cy, true);
+        return;
+      }
+    }
+    spawn(x, y);
+  });
+
+  /* ---------- Sunset sky ---------- */
+  const sky = document.querySelector('.sky');
+  const SKY = [
+    [0.00, '#FFF8EF', '#FFEBD6'],
+    [0.40, '#FFF1DE', '#FFD8B0'],
+    [0.75, '#FFE0BD', '#FFB892'],
+    [1.00, '#FFCFA3', '#FF9C80'],
+  ];
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => 'rgb(' + hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * t)).join(',') + ')';
+  function updateSky() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    let k = 0;
+    while (k < SKY.length - 2 && p > SKY[k + 1][0]) k++;
+    const [p0, t0, b0] = SKY[k];
+    const [p1, t1, b1] = SKY[k + 1];
+    const t = (p - p0) / (p1 - p0);
+    sky.style.setProperty('--sky-top', mix(t0, t1, t));
+    sky.style.setProperty('--sky-bot', mix(b0, b1, t));
+    if (!reduceMotion.matches) {
+      sky.style.setProperty('--sun-y', (6 + p * 62).toFixed(1) + 'vh');
+      sky.style.setProperty('--sun-o', (0.5 + p * 0.4).toFixed(2));
+    }
+  }
+
+  /* ---------- Hero doodles follow the mouse; sprinkle trail ---------- */
+  const hero = document.querySelector('.hero');
+  const trailLayer = document.querySelector('.trail-layer');
+  let lastTrail = null;
+  document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse' || !finePointer.matches || reduceMotion.matches) return;
+    const hr = hero.getBoundingClientRect();
+    if (e.clientY < hr.bottom) {
+      hero.style.setProperty('--mx', ((e.clientX / window.innerWidth) - 0.5).toFixed(3));
+      hero.style.setProperty('--my', (((e.clientY - hr.top) / hr.height) - 0.5).toFixed(3));
+    }
+    if (lastTrail && Math.hypot(e.clientX - lastTrail[0], e.clientY - lastTrail[1]) < 18) return;
+    lastTrail = [e.clientX, e.clientY];
+    if (trailLayer.childElementCount > 40) return;
+    const s = document.createElement('span');
+    s.className = 'trail';
+    s.style.left = e.clientX + 'px';
+    s.style.top = e.clientY + 'px';
+    s.style.setProperty('--c', SPRINKLE_COLORS[Math.floor(Math.random() * SPRINKLE_COLORS.length)]);
+    s.style.setProperty('--r', Math.round(Math.random() * 180) + 'deg');
+    s.style.setProperty('--dx', Math.round(Math.random() * 24 - 12) + 'px');
+    s.addEventListener('animationend', () => s.remove());
+    trailLayer.appendChild(s);
+  }, { passive: true });
+
   let ticking = false;
   const requestUpdate = () => {
     if (!ticking) {
@@ -294,10 +368,12 @@
         ticking = false;
         onScrollScoops();
         updateCone();
+        updateSky();
         markActive();
       });
     }
   };
+  window.addEventListener('resize', updateSky);
 
   window.addEventListener('scroll', requestUpdate, { passive: true });
   reduceMotion.addEventListener('change', updateCone);
@@ -308,5 +384,6 @@
     [0.12, 0.5, 0.88, 0.3, 0.7].forEach((f, i) => setTimeout(() => spawn(w * f), 300 + i * 220));
   }
   updateCone();
+  updateSky();
   markActive();
 })();

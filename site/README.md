@@ -24,6 +24,6 @@ Prices live inside the posters `image5.png` (Starter set) and `image8.png` (Pro 
 ## Files
 - `index.html` — built page (from the template)
 - `styles.css` — theme, layout and animations
-- `main.js` — reveal, menu, image viewer, card tilt, falling ice cream, drips and sprinkle burst
+- `main.js` — reveal, menu, image viewer, card tilt, falling scoops (tap to pop), catching cone, sunset sky, hero doodles, sprinkle trail
 - `assets/original/` — original images from Word, unchanged
 - `assets/img/` — AVIF/WebP at several sizes
