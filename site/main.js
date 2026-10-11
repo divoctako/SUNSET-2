@@ -94,10 +94,54 @@
       lb.showModal();
     });
   });
+  const stage = lb.querySelector('.lb-stage');
+  const ZOOM = 2.5;
+  const unzoom = () => {
+    stage.classList.remove('zoomed');
+    lbImg.style.width = '';
+  };
+  // Tap/click the image to zoom in at that spot; tap again to fit the screen.
+  let down = null;
+  let drag = null;
+  stage.addEventListener('pointerdown', e => {
+    down = [e.clientX, e.clientY];
+    if (e.pointerType === 'mouse' && stage.classList.contains('zoomed')) {
+      drag = [e.clientX, e.clientY, stage.scrollLeft, stage.scrollTop];
+      stage.setPointerCapture(e.pointerId);
+    }
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!drag) return;
+    stage.scrollLeft = drag[2] - (e.clientX - drag[0]);
+    stage.scrollTop = drag[3] - (e.clientY - drag[1]);
+  });
+  stage.addEventListener('pointerup', () => { drag = null; });
+  stage.addEventListener('click', e => {
+    const moved = down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 8;
+    if (moved) return;
+    if (e.target !== lbImg) {
+      if (!stage.classList.contains('zoomed')) lb.close();
+      else unzoom();
+      return;
+    }
+    if (stage.classList.contains('zoomed')) {
+      unzoom();
+      return;
+    }
+    const r = lbImg.getBoundingClientRect();
+    const fx = (e.clientX - r.left) / r.width;
+    const fy = (e.clientY - r.top) / r.height;
+    const w = r.width * ZOOM;
+    stage.classList.add('zoomed');
+    lbImg.style.width = w + 'px';
+    const h = r.height * ZOOM;
+    stage.scrollLeft = fx * w - stage.clientWidth / 2;
+    stage.scrollTop = fy * h - stage.clientHeight / 2;
+  });
   lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
-  lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
   lb.addEventListener('close', () => {
     document.body.classList.remove('lb-open');
+    unzoom();
     lbImg.removeAttribute('src');
     if (lastTrigger) lastTrigger.focus();
   });
