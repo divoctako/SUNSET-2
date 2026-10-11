@@ -1,0 +1,72 @@
+[
+  {
+    "source": "image4.png",
+    "section": "Hero",
+    "description": "โคนเจลาโต้หน้าร้าน"
+  },
+  {
+    "source": "image6.jpg",
+    "section": "เราคือใคร",
+    "description": "ถ้วยเจลาโต้และบรรยากาศการถ่ายภาพ"
+  },
+  {
+    "source": "image3.jpg",
+    "section": "เราคือใคร",
+    "description": "บรรยากาศหน้าร้าน"
+  },
+  {
+    "source": "image1.jpg",
+    "section": "ขายส่ง",
+    "description": "เจลาโต้สองถ้วย"
+  },
+  {
+    "source": "image10.jpg",
+    "section": "ขายส่ง",
+    "description": "ถ้วยและโคนเจลาโต้"
+  },
+  {
+    "source": "image7.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "ร้านและตู้แสดงสินค้า"
+  },
+  {
+    "source": "image5.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "โปสเตอร์ Starter set"
+  },
+  {
+    "source": "image8.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "โปสเตอร์ Pro set"
+  },
+  {
+    "source": "image2.jpg",
+    "section": "Catering",
+    "description": "ถ้วยเจลาโต้"
+  },
+  {
+    "source": "image9.jpg",
+    "section": "Catering",
+    "description": "พื้นที่จัดงานและตู้บริการ"
+  },
+  {
+    "source": "image13.jpg",
+    "section": "Catering",
+    "description": "ผู้ให้บริการและตู้เจลาโต้"
+  },
+  {
+    "source": "image14.jpg",
+    "section": "Catering",
+    "description": "บรรยากาศผู้ร่วมงานรับบริการ"
+  },
+  {
+    "source": "image11.jpg",
+    "section": "Catering",
+    "description": "บรรยากาศงานภายในเต็นท์"
+  },
+  {
+    "source": "image12.jpg",
+    "section": "Catering",
+    "description": "การให้บริการเจลาโต้ในงาน"
+  }
+]

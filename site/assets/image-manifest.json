@@ -1,0 +1,325 @@
+[
+  {
+    "source": "image4.png",
+    "section": "Hero",
+    "description": "โคนเจลาโต้หน้าร้าน",
+    "original": "original/image4.png",
+    "width": 727,
+    "height": 901,
+    "widths": [
+      480,
+      727
+    ],
+    "variants": [
+      "img/image4-480.avif",
+      "img/image4-480.webp",
+      "img/image4-727.avif",
+      "img/image4-727.webp"
+    ]
+  },
+  {
+    "source": "image6.jpg",
+    "section": "เราคือใคร",
+    "description": "ถ้วยเจลาโต้และบรรยากาศการถ่ายภาพ",
+    "original": "original/image6.jpg",
+    "width": 1206,
+    "height": 793,
+    "widths": [
+      480,
+      800,
+      1200,
+      1206
+    ],
+    "variants": [
+      "img/image6-480.avif",
+      "img/image6-480.webp",
+      "img/image6-800.avif",
+      "img/image6-800.webp",
+      "img/image6-1200.avif",
+      "img/image6-1200.webp",
+      "img/image6-1206.avif",
+      "img/image6-1206.webp"
+    ]
+  },
+  {
+    "source": "image3.jpg",
+    "section": "เราคือใคร",
+    "description": "บรรยากาศหน้าร้าน",
+    "original": "original/image3.jpg",
+    "width": 1500,
+    "height": 1500,
+    "widths": [
+      480,
+      800,
+      1200,
+      1500
+    ],
+    "variants": [
+      "img/image3-480.avif",
+      "img/image3-480.webp",
+      "img/image3-800.avif",
+      "img/image3-800.webp",
+      "img/image3-1200.avif",
+      "img/image3-1200.webp",
+      "img/image3-1500.avif",
+      "img/image3-1500.webp"
+    ]
+  },
+  {
+    "source": "image1.jpg",
+    "section": "ขายส่ง",
+    "description": "เจลาโต้สองถ้วย",
+    "original": "original/image1.jpg",
+    "width": 1500,
+    "height": 1500,
+    "widths": [
+      480,
+      800,
+      1200,
+      1500
+    ],
+    "variants": [
+      "img/image1-480.avif",
+      "img/image1-480.webp",
+      "img/image1-800.avif",
+      "img/image1-800.webp",
+      "img/image1-1200.avif",
+      "img/image1-1200.webp",
+      "img/image1-1500.avif",
+      "img/image1-1500.webp"
+    ]
+  },
+  {
+    "source": "image10.jpg",
+    "section": "ขายส่ง",
+    "description": "ถ้วยและโคนเจลาโต้",
+    "original": "original/image10.jpg",
+    "width": 1206,
+    "height": 1491,
+    "widths": [
+      480,
+      800,
+      1200,
+      1206
+    ],
+    "variants": [
+      "img/image10-480.avif",
+      "img/image10-480.webp",
+      "img/image10-800.avif",
+      "img/image10-800.webp",
+      "img/image10-1200.avif",
+      "img/image10-1200.webp",
+      "img/image10-1206.avif",
+      "img/image10-1206.webp"
+    ]
+  },
+  {
+    "source": "image7.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "ร้านและตู้แสดงสินค้า",
+    "original": "original/image7.png",
+    "width": 1024,
+    "height": 1536,
+    "widths": [
+      480,
+      800,
+      1024
+    ],
+    "variants": [
+      "img/image7-480.avif",
+      "img/image7-480.webp",
+      "img/image7-800.avif",
+      "img/image7-800.webp",
+      "img/image7-1024.avif",
+      "img/image7-1024.webp"
+    ]
+  },
+  {
+    "source": "image5.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "โปสเตอร์ Starter set",
+    "original": "original/image5.png",
+    "width": 1080,
+    "height": 1350,
+    "widths": [
+      480,
+      800,
+      1080
+    ],
+    "variants": [
+      "img/image5-480.avif",
+      "img/image5-480.webp",
+      "img/image5-800.avif",
+      "img/image5-800.webp",
+      "img/image5-1080.avif",
+      "img/image5-1080.webp"
+    ]
+  },
+  {
+    "source": "image8.png",
+    "section": "แพ็กเกจเปิดร้าน",
+    "description": "โปสเตอร์ Pro set",
+    "original": "original/image8.png",
+    "width": 1080,
+    "height": 1350,
+    "widths": [
+      480,
+      800,
+      1080
+    ],
+    "variants": [
+      "img/image8-480.avif",
+      "img/image8-480.webp",
+      "img/image8-800.avif",
+      "img/image8-800.webp",
+      "img/image8-1080.avif",
+      "img/image8-1080.webp"
+    ]
+  },
+  {
+    "source": "image2.jpg",
+    "section": "Catering",
+    "description": "ถ้วยเจลาโต้",
+    "original": "original/image2.jpg",
+    "width": 1108,
+    "height": 1477,
+    "widths": [
+      480,
+      800,
+      1108
+    ],
+    "variants": [
+      "img/image2-480.avif",
+      "img/image2-480.webp",
+      "img/image2-800.avif",
+      "img/image2-800.webp",
+      "img/image2-1108.avif",
+      "img/image2-1108.webp"
+    ]
+  },
+  {
+    "source": "image9.jpg",
+    "section": "Catering",
+    "description": "พื้นที่จัดงานและตู้บริการ",
+    "original": "original/image9.jpg",
+    "width": 960,
+    "height": 1280,
+    "widths": [
+      480,
+      800,
+      960
+    ],
+    "variants": [
+      "img/image9-480.avif",
+      "img/image9-480.webp",
+      "img/image9-800.avif",
+      "img/image9-800.webp",
+      "img/image9-960.avif",
+      "img/image9-960.webp"
+    ]
+  },
+  {
+    "source": "image13.jpg",
+    "section": "Catering",
+    "description": "ผู้ให้บริการและตู้เจลาโต้",
+    "original": "original/image13.jpg",
+    "width": 1536,
+    "height": 2048,
+    "widths": [
+      480,
+      800,
+      1200,
+      1536
+    ],
+    "variants": [
+      "img/image13-480.avif",
+      "img/image13-480.webp",
+      "img/image13-800.avif",
+      "img/image13-800.webp",
+      "img/image13-1200.avif",
+      "img/image13-1200.webp",
+      "img/image13-1536.avif",
+      "img/image13-1536.webp"
+    ]
+  },
+  {
+    "source": "image14.jpg",
+    "section": "Catering",
+    "description": "บรรยากาศผู้ร่วมงานรับบริการ",
+    "original": "original/image14.jpg",
+    "width": 1536,
+    "height": 2048,
+    "widths": [
+      480,
+      800,
+      1200,
+      1536
+    ],
+    "variants": [
+      "img/image14-480.avif",
+      "img/image14-480.webp",
+      "img/image14-800.avif",
+      "img/image14-800.webp",
+      "img/image14-1200.avif",
+      "img/image14-1200.webp",
+      "img/image14-1536.avif",
+      "img/image14-1536.webp"
+    ]
+  },
+  {
+    "source": "image11.jpg",
+    "section": "Catering",
+    "description": "บรรยากาศงานภายในเต็นท์",
+    "original": "original/image11.jpg",
+    "width": 1206,
+    "height": 1490,
+    "widths": [
+      480,
+      800,
+      1200,
+      1206
+    ],
+    "variants": [
+      "img/image11-480.avif",
+      "img/image11-480.webp",
+      "img/image11-800.avif",
+      "img/image11-800.webp",
+      "img/image11-1200.avif",
+      "img/image11-1200.webp",
+      "img/image11-1206.avif",
+      "img/image11-1206.webp"
+    ]
+  },
+  {
+    "source": "image12.jpg",
+    "section": "Catering",
+    "description": "การให้บริการเจลาโต้ในงาน",
+    "original": "original/image12.jpg",
+    "width": 1536,
+    "height": 2048,
+    "widths": [
+      480,
+      800,
+      1200,
+      1536
+    ],
+    "variants": [
+      "img/image12-480.avif",
+      "img/image12-480.webp",
+      "img/image12-800.avif",
+      "img/image12-800.webp",
+      "img/image12-1200.avif",
+      "img/image12-1200.webp",
+      "img/image12-1536.avif",
+      "img/image12-1536.webp"
+    ]
+  },
+  {
+    "source": "images.png",
+    "section": "Header / Footer",
+    "description": "โลโก้",
+    "original": "logo.png",
+    "width": 447,
+    "height": 447
+  }
+]
