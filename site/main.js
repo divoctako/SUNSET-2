@@ -100,131 +100,213 @@
     });
   });
 
-  /* ---------- Falling ice cream ---------- */
-  const layer = document.querySelector('.ic-layer');
-  const ic = document.getElementById('icecream');
-  const body = ic.querySelector('.ic-body');
-  const path = layer.querySelector('.ic-path');
-  const zoneEls = [...document.querySelectorAll('[data-zone]')];
+  /* ---------- Scoops ---------- */
+  const FLAVORS = [
+    ['#6B3E26', '#4A2817', '#8A5638'],   // chocolate
+    ['#F59BB0', '#E0728D', '#FFC3D0'],   // strawberry
+    ['#B5D38A', '#8DB25E', '#D3E8B3'],   // pistachio
+    ['#FFF3D6', '#E8C98E', '#FFFFFF'],   // vanilla
+    ['#FFB547', '#F08A12', '#FFD08A'],   // mango
+    ['#A9A6E8', '#8582CF', '#CBC9F5'],   // blueberry
+    ['#F6861A', '#D96A00', '#FFAE5C'],   // sunset orange
+  ];
+  const DOTS = ['#FFFFFF', '#F6861A', '#4A2817', '#E0728D', '#8DB25E', '#8582CF'];
+  let flavorIx = Math.floor(Math.random() * FLAVORS.length);
 
-  let zones = [];   // [{top, bottom}] in document coordinates (centre lane)
-  let startY = 0;   // top of ice cream at the start of the path
-  let endY = 0;     // top of ice cream at the landing spot
-  let size = 0;     // rendered height of the ice cream
-  let lastY = null;
-  let lastDripY = 0;
-  let landedArmed = true;
-  let ticking = false;
-
-  const docTop = el => el.getBoundingClientRect().top + window.scrollY;
-
-  function measure() {
-    size = ic.offsetHeight;
-    zones = zoneEls.map(z => {
-      const top = docTop(z);
-      return { top, bottom: top + z.offsetHeight };
-    });
-    const first = zones[0];
-    const last = zones[zones.length - 1];
-    startY = (first.top + first.bottom) / 2 - size / 2;
-    endY = last.bottom - size;
-    path.style.top = (startY + size * 0.9) + 'px';
-    path.style.height = Math.max(0, endY - startY) + 'px';
-    lastY = null;
-    update();
+  function scoopSVG(f) {
+    const [base, shade, light] = f;
+    let dots = '';
+    for (let i = 0; i < 5; i++) {
+      const x = 22 + Math.random() * 56;
+      const y = 22 + Math.random() * 34;
+      const r = Math.round(Math.random() * 180);
+      const c = DOTS[Math.floor(Math.random() * DOTS.length)];
+      dots += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="9" height="3.4" rx="1.7" fill="${c}" transform="rotate(${r} ${(x + 4.5).toFixed(1)} ${(y + 1.7).toFixed(1)})"/>`;
+    }
+    return `<svg viewBox="0 0 100 92" focusable="false">` +
+      `<path d="M50 4C76 4 94 22 94 46c0 8-2 14-5 18 4 2 6 6 5 10-1 5-7 7-11 4-2 5-8 7-12 3-3 5-10 6-14 2-4 4-11 3-14-2-4 4-10 3-12-2-5 3-11 1-12-4-1-4 1-8 5-10-3-4-5-10-5-18C6 22 24 4 50 4z" fill="${base}" stroke="${shade}" stroke-width="3" stroke-linejoin="round"/>` +
+      `<path d="M12 62c10 8 24 10 38 10s28-2 38-10" fill="none" stroke="${shade}" stroke-width="3" stroke-linecap="round" opacity=".55"/>` +
+      `<ellipse cx="34" cy="24" rx="12" ry="7" fill="${light}" opacity=".85" transform="rotate(-25 34 24)"/>` +
+      dots + `</svg>`;
   }
 
-  function spawnDrip(y) {
-    const d = document.createElement('span');
-    d.className = Math.random() < 0.5 ? 'drip' : 'drip o';
-    d.style.left = `calc(50% + ${(Math.random() * 16 - 8).toFixed(1)}px)`;
-    d.style.top = (y + size * 0.88) + 'px';
-    d.addEventListener('animationend', () => d.remove());
-    layer.appendChild(d);
+  function makeScoop(className) {
+    const el = document.createElement('div');
+    el.className = className ? 'scoop ' + className : 'scoop';
+    el.innerHTML = scoopSVG(FLAVORS[flavorIx++ % FLAVORS.length]);
+    return el;
   }
 
-  const SPRINKLE_COLORS = ['#F6861A', '#FFFFFF', '#FFB566', '#A94700', '#FFD3A6'];
-  function burst(y) {
-    ic.classList.remove('landed');
-    void ic.offsetWidth;
-    ic.classList.add('landed');
-    const n = 22;
+  const SPRINKLE_COLORS = ['#F6861A', '#FFFFFF', '#FFB566', '#A94700', '#F59BB0', '#B5D38A'];
+  function burst(host, x, y) {
+    const n = 26;
     for (let i = 0; i < n; i++) {
       const s = document.createElement('span');
       s.className = 'sprinkle';
-      const angle = Math.PI + (Math.PI * i) / (n - 1) + (Math.random() - 0.5) * 0.25;
-      const dist = 50 + Math.random() * 70;
-      s.style.left = '50%';
-      s.style.top = (y + size * 0.55) + 'px';
+      const angle = Math.PI + (Math.PI * i) / (n - 1) + (Math.random() - 0.5) * 0.3;
+      const dist = 60 + Math.random() * 80;
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
       s.style.setProperty('--x', (Math.cos(angle) * dist).toFixed(1) + 'px');
-      s.style.setProperty('--y', (Math.sin(angle) * dist * 0.8).toFixed(1) + 'px');
+      s.style.setProperty('--y', (Math.sin(angle) * dist * 0.85).toFixed(1) + 'px');
       s.style.setProperty('--r', Math.round(Math.random() * 540 - 270) + 'deg');
       s.style.setProperty('--c', SPRINKLE_COLORS[i % SPRINKLE_COLORS.length]);
-      s.style.animationDelay = Math.round(Math.random() * 80) + 'ms';
+      s.style.animationDelay = Math.round(Math.random() * 90) + 'ms';
       s.addEventListener('animationend', () => s.remove());
-      layer.appendChild(s);
+      host.appendChild(s);
     }
   }
 
-  function update() {
-    ticking = false;
-    const still = reduceMotion.matches;
+  /* Falling scoops: dropped from the top of the screen while scrolling down */
+  const layer = document.querySelector('.scoop-layer');
+  const falling = [];
+  let lastScroll = window.scrollY;
+  let scrollAcc = 0;
+  let running = false;
+  let lastT = 0;
+
+  function spawn(xHint) {
+    const mobile = mobileMQ.matches;
+    if (falling.length >= (mobile ? 7 : 16)) return;
+    const size = mobile ? 34 + Math.random() * 24 : 48 + Math.random() * 46;
+    const w = window.innerWidth;
+    let x;
+    if (xHint != null) x = xHint;
+    else if (!mobile && Math.random() < 0.35) x = w / 2 + (Math.random() - 0.5) * 80;   // centre lane
+    else x = Math.random() * w;
+    const el = makeScoop();
+    el.style.width = size.toFixed(0) + 'px';
+    layer.appendChild(el);
+    falling.push({
+      el,
+      x: x - size / 2,
+      y: -size - Math.random() * 40,
+      vx: (Math.random() - 0.5) * 40,
+      vy: 80 + Math.random() * 120,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 160,
+    });
+    if (!running) {
+      running = true;
+      lastT = performance.now();
+      requestAnimationFrame(step);
+    }
+  }
+
+  function step(t) {
+    const dt = Math.min(0.05, Math.max(0, (t - lastT) / 1000));
+    lastT = t;
+    const h = window.innerHeight;
+    for (let i = falling.length - 1; i >= 0; i--) {
+      const s = falling[i];
+      s.vy += 900 * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.rot += s.vr * dt;
+      if (s.y > h + 20) {
+        s.el.remove();
+        falling.splice(i, 1);
+        continue;
+      }
+      s.el.style.transform = `translate3d(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px, 0) rotate(${s.rot.toFixed(1)}deg)`;
+    }
+    if (falling.length) requestAnimationFrame(step);
+    else running = false;
+  }
+
+  function onScrollScoops() {
+    const y = window.scrollY;
+    const delta = y - lastScroll;
+    lastScroll = y;
+    if (reduceMotion.matches) return;
+    // Scoops already in the air drift with the page a little.
+    falling.forEach(s => { s.y -= delta * 0.18; });
+    if (delta <= 0) { scrollAcc = 0; return; }
+    scrollAcc += delta;
+    const every = mobileMQ.matches ? 220 : 120;
+    while (scrollAcc >= every) {
+      spawn();
+      scrollAcc -= every;
+    }
+  }
+
+  /* Cone before the contact section: one scoop per section passed */
+  const cone = document.querySelector('.cone-catch');
+  const stack = cone.querySelector('.stack');
+  const milestones = ['about', 'wholesale', 'packages', 'catering'].map(id => document.getElementById(id));
+  const stacked = [];
+
+  function targetCount() {
+    if (reduceMotion.matches) return milestones.length;
     const vh = window.innerHeight;
-    let y;
-    let visible = true;
-
-    if (still) {
-      // Static: show in the hero until the landing spot is on screen, then sit there.
-      y = window.scrollY + vh > endY + size ? endY : startY;
-    } else {
-      y = Math.min(endY, Math.max(startY, window.scrollY + vh * 0.42 - size / 2));
-    }
-
-    if (mobileMQ.matches) {
-      // No centre lane on phones: only show inside the decorative gaps between blocks.
-      visible = zones.some(z => y >= z.top - 4 && y + size <= z.bottom + 4);
-    }
-
-    const t = endY > startY ? (y - startY) / (endY - startY) : 0;
-    const rot = still || y >= endY ? 0 : Math.sin(t * Math.PI * 9) * 8;
-    ic.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
-    body.style.rotate = rot.toFixed(2) + 'deg';
-    ic.style.opacity = visible ? '1' : '0';
-
-    if (!still && lastY !== null) {
-      if (y > lastY && y < endY && visible && y - lastDripY > 80) {
-        spawnDrip(y);
-        lastDripY = y;
-      }
-      if (y < lastDripY) lastDripY = y;
-      if (y >= endY && lastY < endY && landedArmed) {
-        burst(y);
-        landedArmed = false;
-      }
-      if (y < endY - 60) landedArmed = true;
-    }
-    lastY = y;
+    let n = 0;
+    milestones.forEach((sec, i) => {
+      const last = i === milestones.length - 1;
+      const top = (last ? cone : sec).getBoundingClientRect().top;
+      if (top < vh * (last ? 0.8 : 0.5)) n = i + 1;
+    });
+    return n;
   }
 
+  function updateCone() {
+    const n = targetCount();
+    const animate = !reduceMotion.matches;
+    while (stacked.length < n) {
+      const el = makeScoop(animate ? 'drop-in' : '');
+      const i = stacked.length;
+      const tilt = (i % 2 ? 1 : -1) * (3 + Math.random() * 4);
+      el.style.bottom = `calc(var(--cone-w) * ${(i * 0.52).toFixed(2)})`;
+      el.style.zIndex = String(10 + i);
+      el.style.setProperty('--r1', tilt.toFixed(1) + 'deg');
+      el.style.setProperty('--r0', (Math.random() * 60 - 30).toFixed(0) + 'deg');
+      if (!animate) el.style.transform = `rotate(${tilt.toFixed(1)}deg)`;
+      stack.appendChild(el);
+      stacked.push(el);
+      if (animate && stacked.length === milestones.length) {
+        setTimeout(() => {
+          if (!el.isConnected) return;
+          cone.classList.remove('full');
+          void cone.offsetWidth;
+          cone.classList.add('full');
+          const coneBox = cone.getBoundingClientRect();
+          const scoopBox = el.getBoundingClientRect();
+          burst(cone, coneBox.width / 2, scoopBox.top - coneBox.top + scoopBox.height * 0.35);
+        }, 450);
+      }
+    }
+    while (stacked.length > n) {
+      const el = stacked.pop();
+      if (animate) {
+        el.classList.remove('drop-in');
+        el.classList.add('pop-out');
+        el.addEventListener('animationend', () => el.remove(), { once: true });
+      } else {
+        el.remove();
+      }
+    }
+  }
+
+  let ticking = false;
   const requestUpdate = () => {
     if (!ticking) {
       ticking = true;
-      requestAnimationFrame(() => { update(); markActive(); });
+      requestAnimationFrame(() => {
+        ticking = false;
+        onScrollScoops();
+        updateCone();
+        markActive();
+      });
     }
   };
 
   window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('resize', measure);
-  [reduceMotion, mobileMQ].forEach(mq => mq.addEventListener('change', measure));
-  if ('ResizeObserver' in window) {
-    let rafId = 0;
-    new ResizeObserver(() => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(measure);
-    }).observe(document.querySelector('main'));
+  reduceMotion.addEventListener('change', updateCone);
+
+  // A small welcome shower in the hero.
+  if (!reduceMotion.matches) {
+    const w = window.innerWidth;
+    [0.12, 0.5, 0.88, 0.3, 0.7].forEach((f, i) => setTimeout(() => spawn(w * f), 300 + i * 220));
   }
-  window.addEventListener('load', measure);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-  measure();
+  updateCone();
   markActive();
 })();

@@ -16,11 +16,11 @@
 
   --wrap: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
-  --lane: 180px;
+  --lane: 120px;
   --radius: 24px;
   --shadow: 0 10px 30px -12px rgba(120, 60, 10, .28);
   --header-h: 72px;
-  --ic-size: 128px;
+  --cone-w: 120px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -164,34 +164,57 @@ h1, h2, h3, p, ul { margin: 0; }
 
 /* ---------- Waves between sections ---------- */
 .wave { position: relative; height: 140px; overflow: hidden; }
-.wave svg { position: absolute; left: 0; bottom: -1px; width: 200%; height: 100%; }
+.wave > svg { position: absolute; left: 0; bottom: -1px; width: 200%; height: 100%; }
 .wave-back { opacity: .45; animation: waveDrift 22s linear infinite reverse; }
 .wave-front { animation: waveDrift 14s linear infinite; }
 .wave-cream-white { background: var(--cream); }
-.wave-cream-white path { fill: var(--white); }
+.wave-cream-white > svg path { fill: var(--white); }
 .wave-white-cream { background: var(--white); }
-.wave-white-cream path { fill: var(--cream); }
+.wave-white-cream > svg path { fill: var(--cream); }
 .wave-white-cream .wave-back path { fill: var(--orange-soft); }
 .wave-cream-white .wave-back path { fill: var(--orange-soft); }
 @keyframes waveDrift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-.drop-zone { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; }
-.lane .drop-zone { top: 10%; bottom: 10%; }
-.wave-landing { height: 220px; }
-.landing-pad { position: absolute; inset: 0; z-index: 1; }
-.landing-pad .drop-zone { top: 10px; bottom: 50px; }
-/* small plate the ice cream lands on */
-.landing-pad::after {
-  content: ""; position: absolute; left: 50%; bottom: 44px; width: 150px; height: 18px;
-  transform: translateX(-50%); border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(246, 134, 26, .35), transparent);
+/* Landing: cone that collects one scoop per section */
+.wave-landing { height: 500px; }
+.cone-catch {
+  position: absolute; left: 50%; bottom: 58px; z-index: 3;
+  width: var(--cone-w); margin-left: calc(var(--cone-w) / -2);
 }
+.cone-svg { display: block; width: 100%; height: auto; position: relative; z-index: 2; filter: drop-shadow(0 10px 12px rgba(169, 71, 0, .25)); }
+.stack { position: absolute; left: 0; right: 0; bottom: 84%; height: 0; z-index: 1; }
+.stack .scoop { position: absolute; left: 50%; bottom: 0; width: calc(var(--cone-w) * 1.04); margin-left: calc(var(--cone-w) * -0.52); }
+.stack .scoop.drop-in { animation: scoopDrop .7s cubic-bezier(.3, 1.5, .5, 1) both; }
+.stack .scoop.pop-out { animation: scoopOut .3s ease-in forwards; }
+.cone-catch.full .cone-svg { animation: coneWiggle .6s ease; }
+@keyframes scoopDrop {
+  0% { transform: translateY(-260px) rotate(var(--r0, -20deg)); opacity: 0; }
+  20% { opacity: 1; }
+  70% { transform: translateY(6px) scale(1.08, .9) rotate(0deg); }
+  100% { transform: translateY(0) rotate(var(--r1, 0deg)); }
+}
+@keyframes scoopOut { to { transform: translateY(-80px) scale(.6); opacity: 0; } }
+@keyframes coneWiggle { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 60% { transform: rotate(5deg); } }
 
 /* ---------- Sections ---------- */
 .sec { position: relative; padding: clamp(28px, 4vw, 56px) 0; }
 .sec-white { background: var(--white); }
 .sec-cream { background: var(--cream); }
 .col-text { display: grid; gap: 16px; align-content: start; }
+
+/* Content floats above the scoop layer; text sits on glass cards */
+.split > *, .site-footer { position: relative; z-index: 2; }
+.split > .lane { z-index: auto; }
+.col-text, .hero-copy {
+  background: rgba(255, 255, 255, .78);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  border: 1.5px solid rgba(246, 134, 26, .18);
+  border-radius: 32px;
+  padding: clamp(20px, 3vw, 40px);
+  box-shadow: 0 18px 40px -26px rgba(169, 71, 0, .45);
+}
+.sec-cream .col-text { background: rgba(255, 255, 255, .72); }
 .sec-head {
   font-family: var(--font-display); font-weight: 700;
   font-size: clamp(26px, 2.8vw, 38px); line-height: 1.25;
@@ -289,40 +312,14 @@ h1, h2, h3, p, ul { margin: 0; }
 
 .mobile-bar { display: none; }
 
-/* ---------- Falling ice cream ---------- */
-.ic-layer { position: absolute; top: 0; left: 0; width: 100%; height: 0; z-index: 20; pointer-events: none; }
-.ic-path {
-  position: absolute; left: 50%; width: 0; border-left: 3px dotted rgba(246, 134, 26, .45);
-  transform: translateX(-1.5px);
-}
-.ic {
-  position: absolute; left: 50%; top: 0; width: var(--ic-size); margin-left: calc(var(--ic-size) / -2);
-  will-change: transform; transition: opacity .3s;
-}
-.ic-body { transform-origin: 50% 70%; }
-.ic svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 10px rgba(169, 71, 0, .22)); }
-.ic.landed .ic-body { animation: icBounce .7s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes icBounce {
-  0% { transform: scale(1, 1); }
-  25% { transform: scale(1.12, .86); }
-  55% { transform: scale(.94, 1.08) translateY(-10px); }
-  100% { transform: scale(1, 1); }
-}
-.drip {
-  position: absolute; width: 9px; height: 13px; margin-left: -4.5px;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  background: var(--white); border: 2px solid #F3A35A;
-  animation: drip 1.5s ease-in forwards;
-}
-.drip.o { background: #FFC58C; border-color: #F6861A; }
-@keyframes drip {
-  0% { opacity: 0; transform: translateY(-6px) scale(.4); }
-  15% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(46px) scale(.6, 1.2); }
-}
+/* ---------- Falling scoops ---------- */
+.scoop-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.scoop-layer .scoop { position: absolute; left: 0; top: 0; will-change: transform; }
+.scoop svg { display: block; width: 100%; height: auto; overflow: visible; }
+body.lb-open .scoop-layer { visibility: hidden; }
 .sprinkle {
   position: absolute; width: 12px; height: 4px; border-radius: 3px; margin: -2px 0 0 -6px;
-  background: var(--c, var(--orange));
+  background: var(--c, var(--orange)); z-index: 4;
   animation: sprinkle .95s cubic-bezier(.15, .7, .3, 1) forwards;
 }
 @keyframes sprinkle {
@@ -330,7 +327,6 @@ h1, h2, h3, p, ul { margin: 0; }
   70% { opacity: 1; }
   100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1); }
 }
-body.lb-open .ic-layer { visibility: hidden; }
 
 /* ---------- Lightbox ---------- */
 .lightbox {
@@ -369,20 +365,20 @@ body.lb-open .ic-layer { visibility: hidden; }
 
 /* ---------- Tablet ---------- */
 @media (max-width: 1023px) {
-  :root { --lane: 110px; --ic-size: 84px; }
+  :root { --lane: 56px; --cone-w: 104px; }
   .wave { height: 120px; }
 }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 767px) {
-  :root { --ic-size: 62px; --header-h: 64px; --radius: 20px; }
+  :root { --cone-w: 88px; --header-h: 64px; --radius: 20px; }
   body { padding-bottom: 86px; }
   .brand img { width: 46px; height: 46px; }
   .split { grid-template-columns: minmax(0, 1fr); }
   .split-rev .col-media { order: 3; }
   .split-rev .lane { order: 2; }
   .lane { height: 0; }
-  .hero .lane { height: 110px; }
+  .hero .lane { height: 24px; }
   .hero-media { justify-self: center; max-width: 380px; }
   .col-media { margin-top: 28px; }
   .about-sub { margin-top: -40px; }
@@ -392,10 +388,10 @@ body.lb-open .ic-layer { visibility: hidden; }
   .col-media.gallery .frame:nth-child(even),
   .js .col-media.gallery [data-reveal].in:nth-child(even) { transform: none; }
   .wave { height: 110px; }
-  .wave-landing { height: 170px; }
-  .landing-pad .drop-zone { bottom: 40px; }
-  .ic-path { display: none; }
-  .hero-actions .btn { flex: 1 1 100%; }
+  .wave-landing { height: 390px; }
+  .cone-catch { bottom: 44px; }
+  .col-text, .hero-copy { border-radius: 26px; }
+    .hero-actions .btn { flex: 1 1 100%; }
   .site-footer { margin-top: 40px; }
   .js [data-reveal] { transform: translateY(14px); transition-duration: .45s; transition-delay: calc(var(--d, 0) * 50ms); }
   .js [data-reveal="right"] { transform: translateX(12px); }
@@ -419,5 +415,5 @@ body.lb-open .ic-layer { visibility: hidden; }
   .js [data-reveal] { opacity: 1; transform: none; }
   .js .hero-title[data-reveal] { transform: rotate(-3deg); }
   .frame:hover img { transform: none; }
-  .drip, .sprinkle { display: none; }
+  .sprinkle, .scoop-layer { display: none; }
 }
