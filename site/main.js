@@ -244,9 +244,7 @@
     const vh = window.innerHeight;
     let n = 0;
     milestones.forEach((sec, i) => {
-      const last = i === milestones.length - 1;
-      const top = (last ? cone : sec).getBoundingClientRect().top;
-      if (top < vh * (last ? 0.8 : 0.5)) n = i + 1;
+      if (sec.getBoundingClientRect().top < vh * 0.5) n = i + 1;
     });
     return n;
   }
