@@ -8,6 +8,9 @@ ROOT = Path(__file__).resolve().parent.parent
 paras = {p["paragraph"]: p["text"] for p in
          json.loads((ROOT / "source-extracted" / "website-copy-verbatim.json").read_text(encoding="utf-8"))["paragraphs"]}
 
+extra = {e["key"]: e["text"] for e in
+         json.loads((ROOT / "source-extracted" / "website-copy-extra.json").read_text(encoding="utf-8"))["entries"]}
+
 VOID = {"img", "source", "meta", "link", "br", "input", "path", "rect"}
 
 
@@ -20,7 +23,8 @@ class P(html.parser.HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag in VOID:
             return
-        self.stack.append([tag, dict(attrs).get("data-p"), []])
+        a = dict(attrs)
+        self.stack.append([tag, a.get("data-p") or ("x:" + a["data-x"] if "data-x" in a else None), []])
 
     def handle_startendtag(self, tag, attrs):
         pass
@@ -34,7 +38,7 @@ class P(html.parser.HTMLParser):
             if self.stack:
                 self.stack[-1][2].append(text)
             if p is not None:
-                self.found.append((int(p), text))
+                self.found.append((p if p.startswith("x:") else int(p), text))
             if t == tag:
                 break
 
@@ -45,11 +49,12 @@ class P(html.parser.HTMLParser):
 
 parser = P()
 parser.feed((ROOT / "site" / "index.html").read_text(encoding="utf-8"))
-errors = [(n, t) for n, t in parser.found if t != paras[n]]
-shown = {n for n, _ in parser.found}
+expected = lambda n: extra[n[2:]] if isinstance(n, str) else paras[n]
+errors = [(n, t) for n, t in parser.found if t != expected(n)]
+shown = {n for n, _ in parser.found if not isinstance(n, str)}
 print(f"checked {len(parser.found)} elements, {len(shown)}/{len(paras)} paragraphs shown")
 for n, t in errors:
-    print(f"MISMATCH p{n}: {t!r} != {paras[n]!r}")
+    print(f"MISMATCH {n}: {t!r} != {expected(n)!r}")
 missing = set(paras) - shown
 if missing:
     print("MISSING:", sorted(missing))

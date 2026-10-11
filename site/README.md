@@ -7,7 +7,7 @@ python -m http.server 8765 --directory site
 ```
 
 ## Editing text
-All visible text comes from `source-extracted/website-copy-verbatim.json`. Never edit `site/index.html` directly.
+All visible text comes from `source-extracted/website-copy-verbatim.json` (Word file). Contacts added later by the owner (e.g. TikTok) live in `source-extracted/website-copy-extra.json`. Never edit `site/index.html` directly.
 
 1. Edit the paragraph text in the JSON (or the layout in `src/index.template.html`).
 2. Run `python tools/build_site.py` to rebuild `site/index.html`.

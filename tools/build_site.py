@@ -21,11 +21,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COPY = ROOT / "source-extracted" / "website-copy-verbatim.json"
+EXTRA = ROOT / "source-extracted" / "website-copy-extra.json"
 TEMPLATE = ROOT / "src" / "index.template.html"
 MANIFEST = ROOT / "site" / "assets" / "image-manifest.json"
 OUT = ROOT / "site" / "index.html"
 
 paras = {p["paragraph"]: p["text"] for p in json.loads(COPY.read_text(encoding="utf-8"))["paragraphs"]}
+extra = {e["key"]: e for e in json.loads(EXTRA.read_text(encoding="utf-8"))["entries"]}
 images = {m["source"]: m for m in json.loads(MANIFEST.read_text(encoding="utf-8")) if "widths" in m}
 used_images = set()
 
@@ -126,13 +128,17 @@ def render(tpl):
             return pic(arg)
         if kind == "zoom":
             return zoom(arg)
+        if kind == "x":
+            return esc(extra[arg]["text"])
+        if kind == "xhref":
+            return attr(extra[arg]["href"])
         if kind == "drip":
             return drip(arg)
         if kind == "strip":
             return strip(arg)
         raise ValueError(kind)
 
-    return re.sub(r"\{\{(p|a|head|pic|zoom|drip|strip):([^}]+)\}\}", sub, tpl)
+    return re.sub(r"\{\{(p|a|head|pic|zoom|drip|strip|x|xhref):([^}]+)\}\}", sub, tpl)
 
 
 def main():

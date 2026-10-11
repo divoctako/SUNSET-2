@@ -423,6 +423,7 @@ body.lb-open .cone-dock { visibility: hidden; }
 .fab-item:hover, .fab-item:focus-visible { background: var(--cream); transform: translateX(-3px); }
 .fab-item svg { flex: none; width: 38px; height: 38px; padding: 9px; border-radius: 50%; fill: var(--white); background: var(--orange-deep); }
 .fab-line svg { background: var(--line-deep); }
+.fab-tiktok svg, .clink-tiktok svg { background: #111; }
 .fab-phone { font-size: 17px; }
 
 /* ---------- Falling scoops ---------- */
